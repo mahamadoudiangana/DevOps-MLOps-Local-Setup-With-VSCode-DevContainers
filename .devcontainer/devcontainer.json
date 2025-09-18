@@ -1,0 +1,33 @@
+{
+  "name": "DevOps CLI",
+
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  // https://containers.dev/features
+  "features": {
+    "ghcr.io/devcontainers/features/aws-cli:1": {}, // Ici, nous ajoutons AWS-CLI
+    "ghcr.io/devcontainers-extras/features/aws-cdk:2": {} // Ici, nous ajoutons CDK
+  },
+
+
+  // N'oubliez pas de changer le chemin en fonction du chemin qui mene a vos credentials sur votre machine locale
+  "mounts": [ 
+    { // Ici, on mount le /Users/USERNAME/.ssh de notre machine locale a /home/vscode/.ssh a l'interieur du conteneur
+      "source": "/Users/USERNAME/.ssh",
+      "target": "/home/vscode/.ssh",
+      "type": "bind"
+    },
+    { // Ici, on mount le /Users/USERNAME/.aws de notre machine locale a /home/vscode/.aws a l'interieur du conteneur
+      "source": "/Users/USERNAME/.aws",
+      "target": "/home/vscode/.aws",
+      "type": "bind"
+    },
+    { // Ici, on mount le /Users/USERNAME/.kube de notre machine locale a /home/vscode/.kube a l'interieur du conteneur
+      "source": "/Users/USERNAME/.kube",
+      "target": "/home/vscode/.kube",
+      "type": "bind"
+    }
+  ]
+}
