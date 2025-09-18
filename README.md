@@ -33,12 +33,14 @@ Avec les **DevContainers**, tous les outils sont packagés dans un environnement
 
 ## _`Structure du projet`_
 
+```bash
 .
 ├── .devcontainer/
 │ ├── devcontainer.json
 │ └── Dockerfile
 ├── main.tf
 └── README.md
+```
 
 
 - **devcontainer.json** : fichier de configuration du DevContainer  
@@ -54,68 +56,15 @@ Dans VS Code, installer l’extension :
 `Dev Containers`  
 
 ### 2. Fichier `devcontainer.json`
-```json
-{
-  "name": "DevOps CLI",
 
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-
-  // https://containers.dev/features
-  "features": {
-    "ghcr.io/devcontainers/features/aws-cli:1": {}, // Ici, nous ajoutons AWS-CLI
-    "ghcr.io/devcontainers-extras/features/aws-cdk:2": {} // Ici, nous ajoutons CDK
-  },
-
-
-  // N'oubliez pas de changer le chemin en fonction du chemin qui mene a vos credentials sur votre machine locale
-  "mounts": [ 
-    { // Ici, on mount le /Users/USERNAME/.ssh de notre machine locale a /home/vscode/.ssh a l'interieur du conteneur
-      "source": "/Users/USERNAME/.ssh",
-      "target": "/home/vscode/.ssh",
-      "type": "bind"
-    },
-    { // Ici, on mount le /Users/USERNAME/.aws de notre machine locale a /home/vscode/.aws a l'interieur du conteneur
-      "source": "/Users/USERNAME/.aws",
-      "target": "/home/vscode/.aws",
-      "type": "bind"
-    },
-    { // Ici, on mount le /Users/USERNAME/.kube de notre machine locale a /home/vscode/.kube a l'interieur du conteneur
-      "source": "/Users/USERNAME/.kube",
-      "target": "/home/vscode/.kube",
-      "type": "bind"
-    }
-  ]
-}
-```
+![Dev Container JSON file](./img/devContainerJson.png)
 
 Cette configuration monte vos credentials locaux (AWS, SSH, Kubernetes) dans le conteneur, afin qu’ils soient utilisables directement dans l’environnement de développement.
 
 
 ### 3. Fichier `Dockerfile`
-```dockerfile
-FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
-RUN apt-get update && \
-    apt-get install -y xz-utils
-
-# Terraform
-ENV TERRAFORM_VERSION=1.8.2
-ENV TERRAFORM_SHA256SUM=74f3cc4151e52d94e0ecbe900552adc9b8440b4a8dc12f7fdaab2d0280788acc
-
-RUN curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
-    echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS && \
-    sha256sum -c terraform_${TERRAFORM_VERSION}_SHA256SUMS && \
-    unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /bin && \
-    rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-
-# Kubectl
-ENV KUBECTL_VERSION=v1.23.1
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
-    chmod +x ./kubectl && \
-    mv ./kubectl /usr/local/bin/kubectl
-```
+![Dockerfile](./img/dockerfile.png)
 
 ---
 
@@ -123,15 +72,7 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL
 
 Pour tester la configuration, un script Terraform (`main.tf`) permet de créer un bucket S3 :
 
-```json
-provider "aws" {
-  region = "us-east-1"
-}
-
-resource "aws_s3_bucket" "diangana_bucket" {
-  bucket = "diangana-bucket-1234"
-}
-```
+![Terraform script for AWS S3 deployment](./img/terraformAWSBucket.png)
 
 ## _`Commandes de test`_
 
